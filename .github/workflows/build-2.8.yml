@@ -43,7 +43,7 @@ jobs:
           - "2.8.1"
           - "2.8.0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.3
       - name: build
         shell: bash
         run: ./build-redis.sh "$REDIS_VERSION"
