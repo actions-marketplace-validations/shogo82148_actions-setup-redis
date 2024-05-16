@@ -33,7 +33,7 @@ jobs:
           - "6.2.1"
           - "6.2.0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.6
       - name: build
         shell: bash
         run: ./build-redis-with-openssl1.1.sh "$REDIS_VERSION"
