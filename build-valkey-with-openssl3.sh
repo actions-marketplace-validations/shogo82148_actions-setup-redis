@@ -3,15 +3,15 @@
 set -uex
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
-export REDIS_VERSION=$1
+export VALKEY_VERSION=$1
 : "${RUNNER_TEMP:=$ROOT/.work}"
 : "${RUNNER_TOOL_CACHE:=$RUNNER_TEMP/dist}"
 case "$(uname -m)" in
     "x86_64")
-        REDIS_ARCH="x64"
+        VALKEY_ARCH="x64"
         ;;
     "arm64" | "aarch64")
-        REDIS_ARCH="arm64"
+        VALKEY_ARCH="arm64"
         ;;
     *)
         echo "unsupported architecture: $(uname -m)"
@@ -19,7 +19,7 @@ case "$(uname -m)" in
         ;;
 esac
 
-PREFIX=$RUNNER_TOOL_CACHE/redis/$REDIS_VERSION/$REDIS_ARCH
+PREFIX=$RUNNER_TOOL_CACHE/valkey/$VALKEY_VERSION/$VALKEY_ARCH
 
 # configure rpath, and detect the number of CPU Core
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -76,24 +76,24 @@ echo "::group::build OpenSSL"
 echo "::endgroup::"
 
 # download
-echo "::group::download redis source"
+echo "::group::download Valkey source"
 (
     mkdir -p "$RUNNER_TEMP"
-    curl -sSL "https://github.com/redis/redis/archive/$REDIS_VERSION.tar.gz" -o "$RUNNER_TEMP/redis.tar.gz"
+    curl -sSL "https://github.com/valkey-io/valkey/archive/$VALKEY_VERSION.tar.gz" -o "$RUNNER_TEMP/valkey.tar.gz"
 )
 echo "::endgroup::"
 
 # build
-echo "::group::build redis"
+echo "::group::build valkey"
 (
     cd "$RUNNER_TEMP"
-    tar xzf redis.tar.gz
-    cd "redis-$REDIS_VERSION"
+    tar xzf valkey.tar.gz
+    cd "valkey-$VALKEY_VERSION"
 
     # apply patches
-    if [[ -d "$ROOT/patches/redis/$REDIS_VERSION" ]]
+    if [[ -d "$ROOT/patches/valkey/$VALKEY_VERSION" ]]
     then
-        cat "$ROOT/patches/redis/$REDIS_VERSION"/*.patch | patch -s -f -p1
+        cat "$ROOT/patches/valkey/$VALKEY_VERSION"/*.patch | patch -s -f -p1
     fi
 
     mkdir -p "$PREFIX"
@@ -101,15 +101,15 @@ echo "::group::build redis"
 )
 echo "::endgroup::"
 
-echo "::group::archive redis binary"
+echo "::group::archive valkey binary"
 (
-    cd "$RUNNER_TEMP/redis-$REDIS_VERSION"
+    cd "$RUNNER_TEMP/valkey-$VALKEY_VERSION"
 
     # remove dev packages
     rm -rf "$PREFIX/include"
     rm -rf "$PREFIX/lib/pkgconfig"
 
     cd "$PREFIX"
-    tar --use-compress-program 'zstd -T0 --long=30 --ultra -22' -cf "$RUNNER_TEMP/redis-bin.tar.zstd" .
+    tar --use-compress-program 'zstd -T0 --long=30 --ultra -22' -cf "$RUNNER_TEMP/valkey-bin.tar.zstd" .
 )
 echo "::endgroup::"

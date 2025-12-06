@@ -4,7 +4,7 @@
   <a href="https://github.com/shogo82148/actions-setup-redis"><img alt="GitHub Actions status" src="https://github.com/shogo82148/actions-setup-redis/workflows/Test/badge.svg"></a>
 </p>
 
-This action sets by [redis](https://redis.io/) database for use in actions by:
+This action sets by [redis](https://redis.io/)/[valkey](https://valkey.io/) database for use in actions by:
 
 - optionally downloading and caching a version of redis
 - start redis-server
@@ -25,7 +25,7 @@ steps:
   - uses: actions/checkout@v4
   - uses: shogo82148/actions-setup-redis@v1
     with:
-      redis-version: "6.x"
+      redis-version: "7.x"
   - run: redis-cli ping
 ```
 
@@ -42,6 +42,8 @@ jobs:
           - "macOS-latest"
         # - 'windows-latest' # windows is currently not supported.
         redis:
+          - "7.2"
+          - "7.0"
           - "6.2"
           - "6.0"
           - "5.0"
@@ -63,15 +65,34 @@ jobs:
 
 ## Configuration
 
+### distribution
+
+The distribution. The valid values are `redis` or `valkey`. The default value is `redis`.
+You can use `redis-` and `valkey-` prefixes in `redis-version` instead of the `distribution` input.
+For example, the following two workflows install Valkey 7.2.
+
+```yaml
+- uses: shogo82148/actions-setup-redis@v1
+  with:
+    distribution: "valkey"
+    redis-version: "7.2"
+```
+
+```yaml
+- uses: shogo82148/actions-setup-redis@v1
+  with:
+    redis-version: "valkey-7.2"
+```
+
 ### redis-version
 
 The version of Redis.
 The `redis-version` input supports the following syntax:
 
 - `latest`: the latest version of stable Redis
-- `6`, `5`, `4`: major versions
-- `6.2`, `6.0`: minor versions
-- `6.2.0`, `6.2.1`: patch versions
+- `7`, `6`, `5`, `4`: major versions
+- `7.2`, `7.0`: minor versions
+- `7.2.0`, `7.2.1`: patch versions
 
 The default value is `latest`.
 The actions supports only stable versions.

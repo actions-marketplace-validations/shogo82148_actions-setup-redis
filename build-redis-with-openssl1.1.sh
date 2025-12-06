@@ -11,7 +11,7 @@ case "$(uname -m)" in
     "x86_64")
         REDIS_ARCH="x64"
         ;;
-    "arm64")
+    "arm64" | "aarch64")
         REDIS_ARCH="arm64"
         ;;
     *)
@@ -98,20 +98,19 @@ echo "::group::build redis"
     cd "redis-$REDIS_VERSION"
 
     # apply patches
-    if [[ -d "$ROOT/patches/$REDIS_VERSION" ]]
+    if [[ -d "$ROOT/patches/redis/$REDIS_VERSION" ]]
     then
-        cat "$ROOT/patches/$REDIS_VERSION"/*.patch | patch -s -f -p1
+        cat "$ROOT/patches/redis/$REDIS_VERSION"/*.patch | patch -s -f -p1
     fi
 
-    make "-j$JOBS" PREFIX="$PREFIX" BUILD_TLS=yes OPENSSL_PREFIX="$PREFIX" V=1
+    mkdir -p "$PREFIX"
+    make install "-j$JOBS" PREFIX="$PREFIX" BUILD_TLS=yes OPENSSL_PREFIX="$PREFIX" V=1
 )
 echo "::endgroup::"
 
 echo "::group::archive redis binary"
 (
     cd "$RUNNER_TEMP/redis-$REDIS_VERSION"
-    mkdir -p "$PREFIX"
-    make install "-j$JOBS" PREFIX="$PREFIX" BUILD_TLS=yes OPENSSL_PREFIX="$PREFIX" V=1
 
     # remove dev packages
     rm -rf "$PREFIX/include"

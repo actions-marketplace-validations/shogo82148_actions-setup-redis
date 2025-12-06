@@ -7,36 +7,48 @@ on:
 
 jobs:
   test:
+    timeout-minutes: 13
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         os:
+          - ubuntu-24.04-arm
+          - ubuntu-22.04-arm
+          - ubuntu-24.04
           - ubuntu-22.04
-          - ubuntu-20.04
+          - macos-26
+          - macos-15
           - macos-14
           - macos-13
-          - macos-12
-          - macos-11
         redis:
           # The latest version that supports OpenSSL 1.1.1
           - "6.2"
 
-          # Ths latest version
-          - "7.2"
+          # The latest version of Redis
+          - "8.2"
+
+          # The latest version of Valkey
+          - "valkey-9.0"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version-file: package.json
           cache: npm
 
       - run: npm ci
       - run: npm test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - run: npm run build
       - id: setup
@@ -51,27 +63,42 @@ jobs:
         run: redis-cli -s "${{ steps.setup.outputs.redis-unix-socket }}" ping
 
   test-tls:
+    timeout-minutes: 21
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         os:
+          - ubuntu-24.04-arm
+          - ubuntu-22.04-arm
+          - ubuntu-24.04
           - ubuntu-22.04
-          - ubuntu-20.04
+          - macos-26
+          - macos-15
           - macos-14
           - macos-13
-          - macos-12
-          - macos-11
         redis:
           - "6.2"
           - "7.0"
+          - "7.2"
+          - "7.4"
+          - "8.0"
+          - "8.2"
+          - "valkey-7.2"
+          - "valkey-8.0"
+          - "valkey-8.1"
+          - "valkey-9.0"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version-file: package.json
           cache: npm
@@ -102,13 +129,18 @@ jobs:
             ping
 
   lint:
+    timeout-minutes: 11
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version-file: package.json
           cache: npm

@@ -2,6 +2,13 @@ name: "actions-setup-redis"
 description: "setup redis database"
 author: "ICHINOSE Shogo"
 inputs:
+  github-token:
+    description: the github token for verifying redis binary
+    default: "${{ github.token }}"
+  distribution:
+    description: the distribution of redis
+    default: "redis"
+    required: true
   redis-version:
     description: the version of redis
     default: "latest"
