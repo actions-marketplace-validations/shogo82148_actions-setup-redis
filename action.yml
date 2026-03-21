@@ -37,10 +37,12 @@ outputs:
     description: the directory path for tls sample certificates/keys
   redis-unix-socket:
     description: the unix domain socket that redis-server listens
+  redis-path:
+    description: The absolute path to the redis-server, redis-cli, etc.
 runs:
-  using: "node20"
-  main: "lib/setup-redis.js"
-  post: "lib/cleanup-redis.js"
+  using: "node24"
+  main: "dist/setup-redis.js"
+  post: "dist/cleanup-redis.js"
   post-if: "always()"
 branding:
   icon: "database"

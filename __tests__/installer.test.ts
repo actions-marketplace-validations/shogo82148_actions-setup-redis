@@ -3,15 +3,18 @@ import * as exec from "@actions/exec";
 import { promises as fs } from "fs";
 import * as path from "path";
 import * as os from "os";
+import { fileURLToPath } from "url";
+import * as installer from "../src/installer.js";
+import * as starter from "../src/starter.js";
+import * as cleanup from "../src/cleanup.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const toolDir = path.join(__dirname, "r", "tools");
 const tempDir = path.join(__dirname, "r", "tmp");
 
 process.env["RUNNER_TOOL_CACHE"] = toolDir;
 process.env["RUNNER_TEMP"] = tempDir;
-import * as installer from "../src/installer";
-import * as starter from "../src/starter";
-import * as cleanup from "../src/cleanup";
 
 const githubToken = process.env["GITHUB_TOKEN"] || "";
 
@@ -31,7 +34,7 @@ describe("installer tests", () => {
   }, 100000);
 
   it("Acquires version of redis if no matching version is installed", async () => {
-    await installer.getRedis("redis", "2.x", githubToken);
+    await installer.getRedis("redis", "2.x");
     const redisDir = path.join(toolDir, "redis", "2.8.24", os.arch());
 
     expect(await exists(`${redisDir}.complete`)).toBe(true);
@@ -40,7 +43,7 @@ describe("installer tests", () => {
 
   it("start and shutdown redis-server", async () => {
     const confPath = await fs.mkdtemp(tempDir + path.sep);
-    const redisPath = await installer.getRedis("redis", "4.x", githubToken);
+    const redisPath = await installer.getRedis("redis", "4.x");
     const cli = path.join(redisPath, "redis-cli");
     await starter.startRedis({ confPath, redisPath, port: 6379, tlsPort: 0, configure: "" });
     await cleanup.shutdownRedis(cli, path.join(confPath, "s"));

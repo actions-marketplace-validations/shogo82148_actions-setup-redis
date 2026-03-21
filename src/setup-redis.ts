@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
-import * as installer from "./installer";
+import * as installer from "./installer.js";
 import * as path from "path";
-import * as starter from "./starter";
+import * as starter from "./starter.js";
 import { promises as fs } from "fs";
 
 async function run(): Promise<void> {
@@ -10,7 +10,6 @@ async function run(): Promise<void> {
   }
   try {
     const required = { required: true };
-    const githubToken = core.getInput("github-token");
     const distribution = core.getInput("distribution", required);
     const version = core.getInput("redis-version", required);
     const port = parseInt(core.getInput("redis-port", required));
@@ -19,8 +18,9 @@ async function run(): Promise<void> {
     const configure = core.getInput("redis-conf");
 
     const redisPath = await core.group("install redis", async (): Promise<string> => {
-      return await installer.getRedis(distribution, version, githubToken);
+      return await installer.getRedis(distribution, version);
     });
+    core.setOutput("redis-path", redisPath);
     if (autoStart) {
       await core.group("start redis", async () => {
         const tempDir = process.env["RUNNER_TEMP"] || "/tmp";
