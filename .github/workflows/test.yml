@@ -15,8 +15,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
+          - ubuntu-26.04-arm
           - ubuntu-24.04-arm
           - ubuntu-22.04-arm
+          - ubuntu-26.04
           - ubuntu-24.04
           - ubuntu-22.04
           - macos-26
@@ -28,19 +30,19 @@ jobs:
           - "6.2"
 
           # The latest version of Redis
-          - "8.6"
+          - "8.10"
 
           # The latest version of Valkey
-          - "valkey-9.0"
+          - "valkey-9.1"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: ".node-version"
           cache: npm
@@ -71,8 +73,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
+          - ubuntu-26.04-arm
           - ubuntu-24.04-arm
           - ubuntu-22.04-arm
+          - ubuntu-26.04
           - ubuntu-24.04
           - ubuntu-22.04
           - macos-26
@@ -84,19 +88,19 @@ jobs:
           - "6.2"
 
           # The latest version of Redis
-          - "8.6"
+          - "8.10"
 
           # The latest version of Valkey
-          - "valkey-9.0"
+          - "valkey-9.1"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: ".node-version"
           cache: npm
@@ -133,12 +137,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: "false"
 
       - name: Set Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: ".node-version"
           cache: npm
